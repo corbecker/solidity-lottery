@@ -11,7 +11,6 @@ let accounts;
 
 beforeEach( async () => {
   accounts = await web3.eth.getAccounts();
-  console.log(accounts)
 
   lottery = await new web3.eth.Contract(JSON.parse(interface))
   .deploy({
@@ -19,12 +18,51 @@ beforeEach( async () => {
   })
   .send({ 
     from: accounts[0],
-    gas: 1000000 
+    gas: '1000000' 
   }); 
 });
 
 describe('Lottery', () => {
-  it('creates a lottery', () => {
-    assert.ok(lottery.options.address)
+  it('deploys a lottery contract', () => {
+    assert.ok(lottery.options.address) 
+  });
+
+  it('assigns a manager', async () => {
+    const manager = await lottery.methods.manager().call();
+    assert.equal(manager, accounts[0]);
+  });
+
+  it('enters one player to lottery', async () => {
+    await lottery.methods.enter().send({ 
+      from: accounts[0],
+      value: web3.utils.toWei('0.1', 'ether')
+    });
+    const players = await lottery.methods.getPlayers().call({ from: accounts[0] });
+    assert.equal(accounts[0], players[0]);
+    assert.equal(1, players.length);
+  });
+
+  it('enters multiple players to lottery', async () => {
+    await lottery.methods.enter().send({
+      from: accounts[0],
+      value: web3.utils.toWei('0.1', 'ether')
+    });
+
+    await lottery.methods.enter().send({
+      from: accounts[1],
+      value: web3.utils.toWei('0.1', 'ether')
+    });
+
+    await lottery.methods.enter().send({
+      from: accounts[2],
+      value: web3.utils.toWei('0.1', 'ether')
+    });
+
+    const players = await lottery.methods.getPlayers().call({ from: accounts[0] });
+
+    assert.equal(3, players.length);
+    assert.equal(accounts[0], players[0]);
+    assert.equal(accounts[1], players[1]);
+    assert.equal(accounts[2], players[2]);
   })
 });
