@@ -64,5 +64,17 @@ describe('Lottery', () => {
     assert.equal(accounts[0], players[0]);
     assert.equal(accounts[1], players[1]);
     assert.equal(accounts[2], players[2]);
-  })
+  });
+
+  it('requires minimum ether to enter', async () => {
+    try{
+      await lottery.methods.enter().send({ 
+        from: accounts[0],
+        value: 200
+      });
+      assert(false); // if the above code runs then this assertion will trigger the test to fail
+    } catch (err) {
+      assert(err); 
+    }
+  });
 });
