@@ -77,4 +77,37 @@ describe('Lottery', () => {
       assert(err); 
     }
   });
+
+  it('only allows manager to run pickWinner', async () => {
+    try{
+      await lottery.methods.pickWinner().send({
+        from: accounts[1]
+      });
+      assert(false);
+    }catch (err) {
+      assert(err);
+    }
+  });
+
+  it('sends money to winner & resets', async () => {
+    const initialBalance = await web3.eth.getBalance(accounts[0]);
+
+    await lottery.methods.enter().send({
+      from: accounts[0],
+      value: web3.utils.toWei('1', 'ether')
+    });
+
+    await lottery.methods.pickWinner().send({
+      from: accounts[0]
+    });
+    const newBalance = await web3.eth.getBalance(accounts[0]);
+
+    const difference = newBalance - initialBalance;
+    const gas = parseInt(difference) - 1; // returns negative number
+
+    assert.equal((parseInt(newBalance) - gas), parseInt(initialBalance)); // minus the gas to add it back 
+    
+    const players = await lottery.methods.getPlayers().call();
+    assert.equal(players.length, 0);
+  });
 });
