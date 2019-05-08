@@ -1,0 +1,23 @@
+{
+  "name": "solidity-lottery",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corbecker/solidity-lottery.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/corbecker/solidity-lottery/issues"
+  },
+  "homepage": "https://github.com/corbecker/solidity-lottery#readme"
+}
